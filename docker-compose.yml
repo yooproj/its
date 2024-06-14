@@ -6,7 +6,7 @@ services:
     container_name: ifn
     image: node:21.7.1-alpine3.18
     volumes:
-      - ./app:/app
+      - ./front:/app
       - node-cache:/usr/local/share/.cache
     working_dir: /app
     ports:
