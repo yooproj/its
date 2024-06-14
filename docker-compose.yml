@@ -4,7 +4,7 @@ services:
 
   ifn:
     container_name: ifn
-    image: node:22.3.0-alpine3.20
+    image: node:21.7.1-alpine3.18
     volumes:
       - ./app:/app
       - node-cache:/usr/local/share/.cache
