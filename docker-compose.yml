@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
 
-  ifn:
-    container_name: ifn
+  itsfront:
+    container_name: itsfront
     image: node:21.7.1-alpine3.18
     volumes:
       - ./front:/app
@@ -13,6 +13,19 @@ services:
       - "3333:3000"
     environment:
       - WDS_SOCKET_PORT=0
+
+  itsback:
+    container_name: itsback
+    image: node:21.7.1-alpine3.18
+    volumes:
+      - ./back:/app
+      - node-cache:/usr/local/share/.cache
+    working_dir: /app
+    ports:
+      - "3333:3000"
+    environment:
+      - WDS_SOCKET_PORT=0
+
 
 volumes:
   node-cache:
