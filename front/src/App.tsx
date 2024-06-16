@@ -4,8 +4,6 @@ import {KeplerGl} from "@kepler.gl/components";
 import {connect, ReactReduxContext} from 'react-redux'
 import {addDataToMap} from '@kepler.gl/actions';
 import {replaceDataInMap} from "kepler.gl/src/actions";
-import {ProtoDataset} from "@kepler.gl/types";
-import {ReplaceDataToMapOptions} from "@kepler.gl/actions/dist/actions";
 import {ReplaceDataInMapPayload} from "kepler.gl/src/actions/dist/actions";
 import axios from "axios";
 
@@ -21,23 +19,23 @@ class App extends Component<any, any> {
     }).then(m => {
 
       const fields = [
-        {name: 'id',format: '', type: 'string'},
-        {name: 'is_deleted', },
+        {name: 'id', format: '', type: 'string'},
+        {name: 'is_deleted',},
         {name: 'vehicle.position.latitude', format: '', type: 'real'},
         {name: 'vehicle.position.longitude', format: '', type: 'real'},
-        {name: 'vehicle.position.bearing', },
-        {name: 'vehicle.position.speed', },
-        {name: 'vehicle.timestamp', },
-        {name: 'vehicle.vehicle.id', },
-        {name: 'vehicle.vehicle.label', },
-        {name: 'vehicle.vehicle.license_plate', },
-        {name: 'vehicle.trip.start_time', },
-        {name: 'vehicle.trip.start_date', },
-        {name: 'vehicle.trip.schedule_relationship', },
-        {name: 'vehicle.trip.route_id', },
-        {name: 'vehicle.trip.direction_id', },
-        {name: 'vehicle.occupancy_status', },
-        {name: 'vehicle.position.odometer', },
+        {name: 'vehicle.position.bearing',},
+        {name: 'vehicle.position.speed',},
+        {name: 'vehicle.timestamp',},
+        {name: 'vehicle.vehicle.id',},
+        {name: 'vehicle.vehicle.label',},
+        {name: 'vehicle.vehicle.license_plate',},
+        {name: 'vehicle.trip.start_time',},
+        {name: 'vehicle.trip.start_date',},
+        {name: 'vehicle.trip.schedule_relationship',},
+        {name: 'vehicle.trip.route_id',},
+        {name: 'vehicle.trip.direction_id',},
+        {name: 'vehicle.occupancy_status',},
+        {name: 'vehicle.position.odometer',},
       ]
 
       const eventSource = new EventSource('//localhost:3000/sse');
@@ -47,15 +45,15 @@ class App extends Component<any, any> {
           fields: fields,
           rows: JSON.parse(data)
         };
-        this.setState({ show: true })
-        if (this.state.show===false) {
+        this.setState({show: true})
+        if (this.state.show === false) {
           this.props.dispatch(
             addDataToMap(
               {
                 datasets: {
                   info: {
-                    label: 'Sample Taxi Trips in New York City',
-                    id: 'test_trip_data'
+                    label: 'Public Transport in Auckland',
+                    id: 'vehicles'
                   },
                   data: sampleTripData2
                 },
@@ -70,14 +68,14 @@ class App extends Component<any, any> {
                 },
               }
             ))
-        }else{
+        } else {
           this.props.dispatch(
             replaceDataInMap({
-              datasetToReplaceId: 'test_trip_data',
+              datasetToReplaceId: 'vehicles',
               datasetToUse: {
                 info: {
-                  label: 'Sample Taxi Trips in New York City',
-                  id: 'test_trip_data'
+                  label: 'Public Transport in Auckland',
+                  id: 'vehicles'
                 },
                 data: sampleTripData2
               },
@@ -86,24 +84,9 @@ class App extends Component<any, any> {
               }
 
             } as ReplaceDataInMapPayload))
-
         }
-
       }
     })
-  }
-  componentDidMount() {
-
-
-    // const sampleConfig = {
-    //
-    // }
-
-
-  }
-
-  refresh() {
-
   }
 
   render() {
@@ -112,9 +95,7 @@ class App extends Component<any, any> {
     return <>
       <div>
         <h1>Start Screen</h1>
-        <div>
-          <button onClick={this.refresh}>Refresh</button>
-        </div>
+
         <ReactReduxContext.Consumer>
           {({store}) => (
             <div className="App">
