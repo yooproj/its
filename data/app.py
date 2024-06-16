@@ -5,6 +5,7 @@ import pandas as pd
 import time
 
 file = 'request.txt'
+response_cache = 'response_cache.txt'
 wait_seconds = 30
 app = Flask(__name__)
 
@@ -16,7 +17,6 @@ def hello():
 
       if (time.time() - int(read_data) < wait_seconds):
         print('not yet')
-        return {} # add file contents
       else:
         f = open(file, "w")
         f.write(str(int(time.time())))
@@ -28,6 +28,11 @@ def hello():
     f.write(str(int(time.time())))
     f.close()
 
+  try:
+    with open(response_cache, 'r') as f:
+      return f.read()
+  except Exception as e:
+    print('no cache')
   return {} # add file contents
 
 def get_vehicles():
@@ -52,8 +57,17 @@ def get_vehicles():
 
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
+  response = entities.to_json(orient='values')
 
-  return entities.to_json(orient='values')
+  f = open(response_cache, "w")
+  f.write(response)
+  f.close()
+  numf = open('num.txt', "a")
+  numf.write(str(int(time.time()))+"\n")
+  numf.close()
+
+
+  return response
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

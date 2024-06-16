@@ -10,111 +10,103 @@ import {ReplaceDataInMapPayload} from "kepler.gl/src/actions/dist/actions";
 import axios from "axios";
 
 class App extends Component<any, any> {
-  componentDidMount() {
-
-
-    const fields = [
-      {name: 'id',format: '', type: 'string'},
-      {name: 'is_deleted', },
-      {name: 'vehicle.position.latitude', format: '', type: 'real'},
-      {name: 'vehicle.position.longitude', format: '', type: 'real'},
-      {name: 'vehicle.position.bearing', },
-      {name: 'vehicle.position.speed', },
-      {name: 'vehicle.timestamp', },
-      {name: 'vehicle.vehicle.id', },
-      {name: 'vehicle.vehicle.label', },
-      {name: 'vehicle.vehicle.license_plate', },
-      {name: 'vehicle.trip.start_time', },
-      {name: 'vehicle.trip.start_date', },
-      {name: 'vehicle.trip.schedule_relationship', },
-      {name: 'vehicle.trip.route_id', },
-      {name: 'vehicle.trip.direction_id', },
-      {name: 'vehicle.occupancy_status', },
-      {name: 'vehicle.position.odometer', },
-    ]
-    const sampleTripData = {
-      fields,
-      rows: [
-        ["512128000",false,-36.8893266667,174.985995,"168",0,1718515702,"512128000","","",null,null,null,null,null,null,null,null],["512008121",false,-36.8365683333,174.77924,"273.7",6.4819944,1718515791,"512008121","","","902-98011-61200-1-7882b8cf","17:00:00","20240616",0,"MTIA-209",null,null,null],
-      ]
+  constructor(props) {
+    super(props);
+    this.state = {
+      show: false
     };
-    const eventSource = new EventSource('//localhost:3000/sse');
-    eventSource.onmessage = ({data}) => {
-
-      const sampleTripData2 = {
-        fields: fields,
-        rows: JSON.parse(data)
-      };
-      console.log(data)
-      this.props.dispatch(
-        replaceDataInMap({
-          datasetToReplaceId: 'test_trip_data',
-          datasetToUse: {
-            info: {
-              label: 'Sample Taxi Trips in New York City',
-              id: 'test_trip_data'
-            },
-            data: sampleTripData2
-          },
-          options: {
-            centerMap: false
-          }
-
-        } as ReplaceDataInMapPayload))
-    }
-    const sampleConfig = {
-      // visState: {
-      // filters: [
-      //   {
-      //     id: 'me',
-      //     dataId: 'test_trip_data',
-      //     name: 'tpep_pickup_datetime',
-      //     type: 'timeRange',
-      //     view: 'enlarged',
-      //     value: ''
-      //   }
-      // ]
-      // }
-    }
-
-
-    // setTimeout(() => {
-    //   debugger
-    this.props.dispatch(
-      addDataToMap(
-        {
-          datasets: {
-            info: {
-              label: 'Sample Taxi Trips in New York City',
-              id: 'test_trip_data'
-            },
-            data: sampleTripData
-          },
-          options: {
-            centerMap: true,
-            readOnly: false,
-            keepExistingConfig: false
-          },
-          info: {
-            title: 'Taro and Blue',
-            description: 'This is my map'
-          },
-          config: sampleConfig
-        }
-      ))
-  }
-
-  refresh() {
     axios({
       method: 'GET',
       url: 'http://localhost:3000/update',
     }).then(m => {
-      console.log('updated')
+
+      const fields = [
+        {name: 'id',format: '', type: 'string'},
+        {name: 'is_deleted', },
+        {name: 'vehicle.position.latitude', format: '', type: 'real'},
+        {name: 'vehicle.position.longitude', format: '', type: 'real'},
+        {name: 'vehicle.position.bearing', },
+        {name: 'vehicle.position.speed', },
+        {name: 'vehicle.timestamp', },
+        {name: 'vehicle.vehicle.id', },
+        {name: 'vehicle.vehicle.label', },
+        {name: 'vehicle.vehicle.license_plate', },
+        {name: 'vehicle.trip.start_time', },
+        {name: 'vehicle.trip.start_date', },
+        {name: 'vehicle.trip.schedule_relationship', },
+        {name: 'vehicle.trip.route_id', },
+        {name: 'vehicle.trip.direction_id', },
+        {name: 'vehicle.occupancy_status', },
+        {name: 'vehicle.position.odometer', },
+      ]
+
+      const eventSource = new EventSource('//localhost:3000/sse');
+      eventSource.onmessage = ({data}) => {
+
+        const sampleTripData2 = {
+          fields: fields,
+          rows: JSON.parse(data)
+        };
+        this.setState({ show: true })
+        if (this.state.show===false) {
+          this.props.dispatch(
+            addDataToMap(
+              {
+                datasets: {
+                  info: {
+                    label: 'Sample Taxi Trips in New York City',
+                    id: 'test_trip_data'
+                  },
+                  data: sampleTripData2
+                },
+                options: {
+                  centerMap: true,
+                  readOnly: false,
+                  keepExistingConfig: false
+                },
+                info: {
+                  title: 'Taro and Blue',
+                  description: 'This is my map'
+                },
+              }
+            ))
+        }else{
+          this.props.dispatch(
+            replaceDataInMap({
+              datasetToReplaceId: 'test_trip_data',
+              datasetToUse: {
+                info: {
+                  label: 'Sample Taxi Trips in New York City',
+                  id: 'test_trip_data'
+                },
+                data: sampleTripData2
+              },
+              options: {
+                centerMap: false
+              }
+
+            } as ReplaceDataInMapPayload))
+
+        }
+
+      }
     })
+  }
+  componentDidMount() {
+
+
+    // const sampleConfig = {
+    //
+    // }
+
+
+  }
+
+  refresh() {
+
   }
 
   render() {
-
 
     const token: string = 'pk.eyJ1IjoibmVrb3phZW1vbiIsImEiOiJjbHc3bXVhOGUxaDZ0MmtxZXJlaG5uODV2In0.r-32TJBbgyDT2kfgpHBfFg'
     return <>

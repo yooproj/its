@@ -2,11 +2,8 @@ import {Controller, Get, Sse} from '@nestjs/common';
 import {AppService} from './app.service';
 import {map, Observable, Subject} from "rxjs";
 
-const fs = require('node:fs');
-
 @Controller()
 export class AppController {
-  private updated = false;
   private subject: Subject<object> = null;
 
   constructor(private readonly appService: AppService,) {
@@ -20,14 +17,9 @@ export class AppController {
   }
 
   @Get('/update')
-  async getT() {
-    console.log('getT')
-
+  async update() {
     const data = await this.appService.getData()
     try {
-      console.log('data got');
-
-      this.updated = true
       this.subject.next(data)
     } catch (err) {
       console.error(err);
@@ -38,18 +30,16 @@ export class AppController {
 
   @Sse('sse')
   sse(): Observable<MessageEvent> {
-    return this.subject.pipe(map(function (data) {
-      if (this.updated === true) {
-        this.updated = false
-        console.log('this.updated')
-        console.log(this.updated)
-        try {
-          return {data} as MessageEvent
+    setInterval(() => {
+      console.log('inside setInterval')
+      this.appService.getData().then((d) => {
+        this.subject.next(d)
+      })
 
-        } catch (err) {
-          console.error(err);
-        }
-      }
+    }, 5000)
+
+    return this.subject.pipe(map(function (data) {
+      return {data} as MessageEvent
     }.bind(this)));
   }
 }
