@@ -13,7 +13,7 @@ def hello():
     hdr ={
     # Request headers
     'Cache-Control': 'no-cache',
-    'Ocp-Apim-Subscription-Key': '',
+    'Ocp-Apim-Subscription-Key': '5539b638eac44c629cc7c3b6b3c5b1be',
     }
 
     req = urllib.request.Request(url, headers=hdr)
@@ -31,7 +31,7 @@ def hello():
   entities = pd.json_normalize(data['response']['entity'])
 
 
-  return entities.to_csv()
+  return entities.to_json(orient='values')
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

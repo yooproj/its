@@ -13,27 +13,36 @@ class App extends Component<any, any> {
   componentDidMount() {
 
 
+    const fields = [
+      {name: 'id',format: '', type: 'string'},
+      {name: 'is_deleted', },
+      {name: 'vehicle.position.latitude', format: '', type: 'real'},
+      {name: 'vehicle.position.longitude', format: '', type: 'real'},
+      {name: 'vehicle.position.bearing', },
+      {name: 'vehicle.position.speed', },
+      {name: 'vehicle.timestamp', },
+      {name: 'vehicle.vehicle.id', },
+      {name: 'vehicle.vehicle.label', },
+      {name: 'vehicle.vehicle.license_plate', },
+      {name: 'vehicle.trip.start_time', },
+      {name: 'vehicle.trip.start_date', },
+      {name: 'vehicle.trip.schedule_relationship', },
+      {name: 'vehicle.trip.route_id', },
+      {name: 'vehicle.trip.direction_id', },
+      {name: 'vehicle.occupancy_status', },
+      {name: 'vehicle.position.odometer', },
+    ]
     const sampleTripData = {
-      fields: [
-        {name: 'tpep_pickup_datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-        {name: 'pickup_longitude', format: '', type: 'real'},
-        {name: 'pickup_latitude', format: '', type: 'real'}
-      ],
+      fields,
       rows: [
-        [
-          ['2015-01-15 19:05:39 +00:00', 174.762192, -36.848450]
-        ]
+        ["512128000",false,-36.8893266667,174.985995,"168",0,1718515702,"512128000","","",null,null,null,null,null,null,null,null],["512008121",false,-36.8365683333,174.77924,"273.7",6.4819944,1718515791,"512008121","","","902-98011-61200-1-7882b8cf","17:00:00","20240616",0,"MTIA-209",null,null,null],
       ]
     };
     const eventSource = new EventSource('//localhost:3000/sse');
     eventSource.onmessage = ({data}) => {
 
       const sampleTripData2 = {
-        fields: [
-          {name: 'tpep_pickup_datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-          {name: 'pickup_longitude', format: '', type: 'real'},
-          {name: 'pickup_latitude', format: '', type: 'real'}
-        ],
+        fields: fields,
         rows: JSON.parse(data)
       };
       console.log(data)
