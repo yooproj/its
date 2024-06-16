@@ -3,6 +3,7 @@ import urllib.request
 import json
 import pandas as pd
 import time
+import os
 
 file = 'request.txt'
 response_cache = 'response_cache.txt'
@@ -41,7 +42,7 @@ def get_vehicles():
 
     hdr = {
     'Cache-Control': 'no-cache',
-    'Ocp-Apim-Subscription-Key': '',
+    'Ocp-Apim-Subscription-Key': os.environ.get('AT_KEY'),
     }
 
     req = urllib.request.Request(url, headers=hdr)

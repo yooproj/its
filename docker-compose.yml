@@ -28,6 +28,7 @@ services:
 
   itsdata:
     container_name: itsdata
+    env_file: "data/.env"
     build:
       context: data
     volumes:
