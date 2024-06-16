@@ -11,6 +11,7 @@
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",
     "assert": "^2.1.0",
+    "axios": "^1.7.2",
     "kepler.gl": "^3.0.0",
     "react": "*",
     "react-dom": "^18.2.0",
@@ -31,7 +32,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-
   "browserslist": {
     "production": [
       ">0.2%",

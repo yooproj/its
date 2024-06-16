@@ -1,7 +1,14 @@
 c = npm -h
 f:
-	docker-compose run -p "3333:3000" --rm itsfront $(c)
+	docker-compose run  --rm itsfront $(c)
 
 
 b:
-	docker-compose run -p "3000:3000" --rm itsback $(c)
+	docker-compose run  --rm itsback $(c)
+
+up:
+	docker-compose up -d
+down:
+	docker-compose down
+
+init: down up

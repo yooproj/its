@@ -7,10 +7,10 @@ import {replaceDataInMap} from "kepler.gl/src/actions";
 import {ProtoDataset} from "@kepler.gl/types";
 import {ReplaceDataToMapOptions} from "@kepler.gl/actions/dist/actions";
 import {ReplaceDataInMapPayload} from "kepler.gl/src/actions/dist/actions";
+import axios from "axios";
 
 class App extends Component<any, any> {
   componentDidMount() {
-
 
 
     const sampleTripData = {
@@ -21,12 +21,12 @@ class App extends Component<any, any> {
       ],
       rows: [
         [
-          ['2015-01-15 19:05:39 +00:00',  174.76219,-36.848450]
+          ['2015-01-15 19:05:39 +00:00', 174.762192, -36.848450]
         ]
       ]
     };
     const eventSource = new EventSource('//localhost:3000/sse');
-    eventSource.onmessage = ({ data }) => {
+    eventSource.onmessage = ({data}) => {
 
       const sampleTripData2 = {
         fields: [
@@ -47,7 +47,7 @@ class App extends Component<any, any> {
             },
             data: sampleTripData2
           },
-          options:{
+          options: {
             centerMap: false
           }
 
@@ -55,16 +55,16 @@ class App extends Component<any, any> {
     }
     const sampleConfig = {
       // visState: {
-        // filters: [
-        //   {
-        //     id: 'me',
-        //     dataId: 'test_trip_data',
-        //     name: 'tpep_pickup_datetime',
-        //     type: 'timeRange',
-        //     view: 'enlarged',
-        //     value: ''
-        //   }
-        // ]
+      // filters: [
+      //   {
+      //     id: 'me',
+      //     dataId: 'test_trip_data',
+      //     name: 'tpep_pickup_datetime',
+      //     type: 'timeRange',
+      //     view: 'enlarged',
+      //     value: ''
+      //   }
+      // ]
       // }
     }
 
@@ -95,6 +95,15 @@ class App extends Component<any, any> {
       ))
   }
 
+  refresh() {
+    axios({
+      method: 'GET',
+      url: 'http://localhost:3000/update',
+    }).then(m => {
+      console.log('updated')
+    })
+  }
+
   render() {
 
 
@@ -102,6 +111,9 @@ class App extends Component<any, any> {
     return <>
       <div>
         <h1>Start Screen</h1>
+        <div>
+          <button onClick={this.refresh}>Refresh</button>
+        </div>
         <ReactReduxContext.Consumer>
           {({store}) => (
             <div className="App">

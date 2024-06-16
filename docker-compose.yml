@@ -13,6 +13,7 @@ services:
       - "3333:3000"
     environment:
       - WDS_SOCKET_PORT=0
+    command: "npm start"
 
   itsback:
     container_name: itsback
@@ -22,10 +23,20 @@ services:
       - node-cache:/usr/local/share/.cache
     working_dir: /app
     ports:
-      - "3333:3000"
-    environment:
-      - WDS_SOCKET_PORT=0
+      - "3000:3000"
+    command: "npm run start:dev"
 
+  itsdata:
+    container_name: itsdata
+    build:
+      context: data
+    volumes:
+      - ./data:/app
+    working_dir: /app
+    # flask requires SIGINT to stop gracefully
+    # (default stop signal from Compose is SIGTERM)
+    stop_signal: SIGINT
+    command: "python -m flask --app app run --debug -p 8000 -h 0.0.0.0"
 
 volumes:
   node-cache:
