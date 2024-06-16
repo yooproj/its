@@ -2,18 +2,41 @@ from flask import Flask
 import urllib.request
 import json
 import pandas as pd
+import time
 
+file = 'request.txt'
+wait_seconds = 30
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
   try:
+    with open(file, 'r') as f:
+      read_data = f.read()
+
+      if (time.time() - int(read_data) < wait_seconds):
+        print('not yet')
+        return {} # add file contents
+      else:
+        f = open(file, "w")
+        f.write(str(int(time.time())))
+        f.close()
+        print('can make request')
+        return get_vehicles()
+  except Exception as e:
+    f = open(file, "w")
+    f.write(str(int(time.time())))
+    f.close()
+
+  return {} # add file contents
+
+def get_vehicles():
+  try:
     url = "https://api.at.govt.nz/realtime/legacy/vehiclelocations"
 
-    hdr ={
-    # Request headers
+    hdr = {
     'Cache-Control': 'no-cache',
-    'Ocp-Apim-Subscription-Key': '5539b638eac44c629cc7c3b6b3c5b1be',
+    'Ocp-Apim-Subscription-Key': '',
     }
 
     req = urllib.request.Request(url, headers=hdr)
@@ -29,7 +52,6 @@ def hello():
 
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
-
 
   return entities.to_json(orient='values')
 
