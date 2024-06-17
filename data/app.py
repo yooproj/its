@@ -8,7 +8,7 @@ from flask import json
 
 file = 'request.txt'
 response_cache = 'vehicles_response_cache.txt'
-wait_seconds = 30
+wait_seconds = int(os.environ.get('AT_SECONDS_FREQUENCY'))
 app = Flask(__name__)
 
 

@@ -50,13 +50,15 @@ class App extends Component<any, any> {
           this.props.dispatch(
             addDataToMap(
               {
-                datasets: {
-                  info: {
-                    label: 'Public Transport in Auckland',
-                    id: 'vehicles'
-                  },
-                  data: vehiclesData
-                },
+                datasets: [
+                  {
+                    info: {
+                      label: 'Public Transport in Auckland',
+                      id: 'vehicles'
+                    },
+                    data: vehiclesData
+                  }
+                ],
                 options: {
                   centerMap: true,
                   readOnly: false,
