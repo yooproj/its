@@ -19,7 +19,7 @@ def getData():
   vehicles = get_vehicles()
 
   response = app.response_class(
-    response=json.dumps({'vehicles': vehicles}),
+    response=json.dumps({'vehicles': json.loads(vehicles)}),
     status=200,
     mimetype='application/json'
   )

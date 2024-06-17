@@ -18,7 +18,7 @@ class App extends Component<any, any> {
       url: 'http://localhost:3000/update',
     }).then(m => {
 
-      const fields = [
+      const veh_fields = [
         {name: 'id', format: '', type: 'string'},
         {name: 'is_deleted',},
         {name: 'vehicle.position.latitude', format: '', type: 'real'},
@@ -40,10 +40,10 @@ class App extends Component<any, any> {
 
       const eventSource = new EventSource('//localhost:3000/sse');
       eventSource.onmessage = ({data}) => {
-
-        const sampleTripData2 = {
-          fields: fields,
-          rows: JSON.parse(data)
+        const response_data = JSON.parse(data)
+        const vehiclesData = {
+          fields: veh_fields,
+          rows: response_data['vehicles']
         };
         this.setState({show: true})
         if (this.state.show === false) {
@@ -55,7 +55,7 @@ class App extends Component<any, any> {
                     label: 'Public Transport in Auckland',
                     id: 'vehicles'
                   },
-                  data: sampleTripData2
+                  data: vehiclesData
                 },
                 options: {
                   centerMap: true,
@@ -77,7 +77,7 @@ class App extends Component<any, any> {
                   label: 'Public Transport in Auckland',
                   id: 'vehicles'
                 },
-                data: sampleTripData2
+                data: vehiclesData
               },
               options: {
                 centerMap: false

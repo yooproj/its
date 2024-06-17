@@ -39,7 +39,7 @@ export class AppController {
     }, 5000)
 
     return this.subject.pipe(map(function (data) {
-      return {data: data['vehicles']} as MessageEvent
+      return {data} as MessageEvent
     }.bind(this)));
   }
 }
