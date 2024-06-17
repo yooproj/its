@@ -64,7 +64,7 @@ class App extends Component<any, any> {
                 },
                 info: {
                   title: 'Taro and Blue',
-                  description: 'This is my map'
+                  description: 'This is my map'//todo
                 },
               }
             ))

@@ -4,39 +4,61 @@ import json
 import pandas as pd
 import time
 import os
+from flask import json
 
 file = 'request.txt'
-response_cache = 'response_cache.txt'
+response_cache = 'vehicles_response_cache.txt'
 wait_seconds = 30
 app = Flask(__name__)
 
+
 @app.route('/')
-def hello():
+def getData():
+  vehicles = []
+
+  vehicles = get_vehicles()
+
+  response = app.response_class(
+    response=json.dumps({'vehicles': vehicles}),
+    status=200,
+    mimetype='application/json'
+  )
+  return response
+
+
+def can_make_request():
   try:
     with open(file, 'r') as f:
       read_data = f.read()
 
       if (time.time() - int(read_data) < wait_seconds):
         print('not yet')
+        return False
       else:
         f = open(file, "w")
         f.write(str(int(time.time())))
         f.close()
         print('can make request')
-        return get_vehicles()
+        return True
   except Exception as e:
     f = open(file, "w")
     f.write(str(int(time.time())))
     f.close()
+    return True
 
-  try:
-    with open(response_cache, 'r') as f:
-      return f.read()
-  except Exception as e:
-    print('no cache')
-  return {} # add file contents
+
+
+
 
 def get_vehicles():
+  if can_make_request() == False:
+    try:
+      with open(response_cache, 'r') as f:
+        return f.read()
+    except Exception as e:
+      print('no cache')
+      return []
+
   try:
     url = "https://api.at.govt.nz/realtime/legacy/vehiclelocations"
 
@@ -63,7 +85,7 @@ def get_vehicles():
   f = open(response_cache, "w")
   f.write(response)
   f.close()
-  numf = open('num.txt', "a")
+  numf = open('vehicles_requests.txt', "a")
   numf.write(str(int(time.time()))+"\n")
   numf.close()
 
