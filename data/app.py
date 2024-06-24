@@ -102,6 +102,8 @@ def get_vehicles():
   return response
 
 def get_alerts():
+  # should request once an hour
+  # decode header text
   print('get_alerts   ')
   if can_make_request() == False:
     try:
@@ -151,7 +153,25 @@ def get_alerts():
   numf.close()
 
 
-  return js
+
+  alerts_copy = entities.copy()
+  alerts_copy = pd.json_normalize(data['response']['entity'],
+    ['alert','informed_entity' ], meta=['id'])
+  alerts_copy = alerts_copy.drop(['route_id','trip.trip_id'],axis=1)
+
+  n = entities.merge(alerts_copy, on=['id'])
+  n.dropna(subset=["stop_id"], inplace=True)  # option 1
+
+  stops = pd.json_normalize(json.load(open('./data/stops.json'))['data'])
+  print(stops)
+  print('  ')
+  stops = stops[["attributes.stop_code", "attributes.stop_id", "attributes.stop_lat", "attributes.stop_lon", "attributes.stop_name"]]
+  stops = stops.rename(columns={"attributes.stop_id": "stop_id"})
+
+  result = n.merge(stops, on=['stop_id'],how='left')
+
+
+  return result.to_json(orient='values')
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

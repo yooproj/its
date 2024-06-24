@@ -1,3 +1,4 @@
 *
 !.gitignore
 !wait_seconds
+!stops.json
