@@ -18,6 +18,22 @@ class App extends Component<any, any> {
       url: 'http://localhost:3000/update',
     }).then(m => {
 
+      const alerts_fields = [
+        {name: 'id', format: '', type: 'string'},
+        {name: 'timestamp', format: '', type: 'string'},
+        {name: 'alert.cause', format: '', type: 'string'},
+        {name: 'alert.effect', format: '', type: 'string'},
+        {name: 'alert.header_text.translation', format: '', type: 'string'},
+        {name: 'alert.active_period', format: '', type: 'string'},
+        {name: 'alert.informed_entity', format: '', type: 'string'},
+        {name: 'alert.description_text.translation', format: '', type: 'string'},
+        {name: 'alert.url.translation', format: '', type: 'string'},
+        {name: 'stop_id', format: '', type: 'string'},
+        {name: 'attributes.stop_code', format: '', type: 'string'},
+        {name: 'attributes.stop_lat', format: '', type: 'real'},
+        {name: 'attributes.stop_lon', format: '', type: 'real'},
+        {name: 'attributes.stop_name', format: '', type: 'string'},
+      ]
       const veh_fields = [
         {name: 'id', format: '', type: 'string'},
         {name: 'is_deleted',},
@@ -41,9 +57,14 @@ class App extends Component<any, any> {
       const eventSource = new EventSource('//localhost:3000/sse');
       eventSource.onmessage = ({data}) => {
         const response_data = JSON.parse(data)
+
         const vehiclesData = {
           fields: veh_fields,
           rows: response_data['vehicles']
+        };
+        const alertsData = {
+          fields: alerts_fields,
+          rows: (response_data['alerts'])
         };
         this.setState({show: true})
         if (this.state.show === false) {
@@ -57,7 +78,14 @@ class App extends Component<any, any> {
                       id: 'vehicles'
                     },
                     data: vehiclesData
-                  }
+                  },
+                  {
+                    info: {
+                      label: 'Public Transport Alerts',
+                      id: 'alerts'
+                    },
+                    data: alertsData
+                  },
                 ],
                 options: {
                   centerMap: true,
