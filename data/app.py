@@ -131,27 +131,14 @@ def get_alerts():
     if response.getcode() != 200:#
       print('Error    !!!')
     contents = (response.read())
-#     f = open(alerts_response_cache, "w")
-#     f.write(js)
-#     f.close()
 
     data = json.loads((contents))
     entities = pd.json_normalize(data['response']['entity'])
-    js = entities.to_json(orient='values')
 
   except Exception as e:
     print('alerts Error!!!')
     print(e)
     return []
-
-  print('writing cache')
-  f = open(alerts_response_cache, "w")
-  f.write(js)
-  f.close()
-  numf = open(file_alerts_request, "a")
-  numf.write(str(int(time.time()))+"\n")
-  numf.close()
-
 
 
   alerts_copy = entities.copy()
@@ -169,6 +156,34 @@ def get_alerts():
   stops = stops.rename(columns={"attributes.stop_id": "stop_id"})
 
   result = n.merge(stops, on=['stop_id'],how='left')
+
+  copy = result.copy()
+  copy['alert_text'] = pd.json_normalize(pd.json_normalize(copy['alert.header_text.translation'])[0])['text']
+
+  copy['description'] = pd.json_normalize(pd.json_normalize(copy['alert.description_text.translation'])[0])['text']
+
+  copy['period_start'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['start']
+  copy['period_end'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['end']
+
+  copy['start'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['start']
+  copy['end'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['end']
+
+
+  copy['period_end']= pd.to_datetime(copy['period_end'], unit='s', utc=True)
+  copy['period_start']= pd.to_datetime(copy['period_start'], unit='s', utc=True)
+
+  copy['period_end'] = copy['period_end'] + pd.Timedelta('12:00:00')
+
+  copy['period_start'] = copy['period_start'] + pd.Timedelta('12:00:00')
+
+  copy=copy.drop(['alert.header_text.translation','alert.description_text.translation','alert.active_period','alert.informed_entity'],axis=1)
+  result=copy
+
+  print('writing alerts cache')
+  result.to_json(alerts_response_cache, orient='values')
+  numf = open(file_alerts_request, "a")
+  numf.write(str(int(time.time()))+"\n")
+  numf.close()
 
 
   return result.to_json(orient='values')

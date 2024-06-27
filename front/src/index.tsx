@@ -10,9 +10,15 @@ import {taskMiddleware} from "react-palm/tasks";
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+const customizedKeplerGlReducer = keplerGlReducer.initialState({
+  uiState: {
+    // hide all modals when mounted
+    currentModal: null
+  }
+});
 const reducer = combineReducers({
   // <-- mount kepler.gl reducer in your app
-  keplerGl: keplerGlReducer,
+  keplerGl: customizedKeplerGlReducer,
 
 });
 const store = createStore(reducer, {}, applyMiddleware(taskMiddleware));

@@ -5,9 +5,10 @@ import {map, Observable, Subject} from "rxjs";
 @Controller()
 export class AppController {
   private subject: Subject<object> = null;
+  private timer: any;
 
   constructor(private readonly appService: AppService,) {
-
+    this.timer = null
     this.subject = new Subject()
   }
 
@@ -25,18 +26,20 @@ export class AppController {
       console.error(err);
     }
 
-    return {}
+    return data
   }
 
   @Sse('sse')
   sse(): Observable<MessageEvent> {
-    setInterval(() => {
-      console.log('inside setInterval')
-      this.appService.getData().then((d) => {
-        this.subject.next(d)
-      })
+    if (this.timer === null) {
+      this.timer = setInterval(() => {
+        console.log('inside setInterval')
+        this.appService.getData().then((d) => {
+          this.subject.next(d)
+        })
 
-    }, 5000)
+      }, 5000)
+    }
 
     return this.subject.pipe(map(function (data) {
       return {data} as MessageEvent
