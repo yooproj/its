@@ -12,6 +12,7 @@ file_vehicles_request = './data/vehicles_requests.txt'
 alerts_response_cache = './data/alerts_response_cache.txt'
 file_alerts_request = './data/alerts_requests.txt'
 file_wait_seconds = './data/wait_seconds'
+file_stops = './data/stops.json'
 app = Flask(__name__)
 
 
@@ -149,7 +150,7 @@ def get_alerts():
   n = entities.merge(alerts_copy, on=['id'])
   n.dropna(subset=["stop_id"], inplace=True)  # option 1
 
-  stops = pd.json_normalize(json.load(open('./data/stops.json'))['data'])
+  stops = pd.json_normalize(json.load(open(file_stops))['data'])
   print(stops)
   print('  ')
   stops = stops[["attributes.stop_code", "attributes.stop_id", "attributes.stop_lat", "attributes.stop_lon", "attributes.stop_name"]]
