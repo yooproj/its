@@ -13,6 +13,7 @@ alerts_response_cache = './data/alerts_response_cache.txt'
 file_alerts_request = './data/alerts_requests.txt'
 file_wait_seconds = './data/wait_seconds'
 file_stops = './data/stops.json'
+orient = 'table'
 app = Flask(__name__)
 
 
@@ -67,7 +68,7 @@ def get_vehicles():
         return f.read()
     except Exception as e:
       print('no cache')
-      return []
+      return '[]'
 
   try:
     url = "https://api.at.govt.nz/realtime/legacy/vehiclelocations"
@@ -90,7 +91,9 @@ def get_vehicles():
 
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
-  response = entities.to_json(orient='values')
+  entities['icon'] = 'car'
+
+  response = entities.to_json(orient=orient)
 
   f = open(vehicles_response_cache, "w")
   f.write(response)
@@ -139,13 +142,13 @@ def get_alerts():
   except Exception as e:
     print('alerts Error!!!')
     print(e)
-    return []
+    return '[]'
 
 
   alerts_copy = entities.copy()
   alerts_copy = pd.json_normalize(data['response']['entity'],
     ['alert','informed_entity' ], meta=['id'])
-  alerts_copy = alerts_copy.drop(['route_id','trip.trip_id'],axis=1)
+  alerts_copy = alerts_copy.drop(['route_id'], axis=1)
 
   n = entities.merge(alerts_copy, on=['id'])
   n.dropna(subset=["stop_id"], inplace=True)  # option 1
@@ -168,6 +171,7 @@ def get_alerts():
 
   copy['start'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['start']
   copy['end'] = pd.json_normalize(pd.json_normalize(copy['alert.active_period'])[0])['end']
+  copy['icon'] = 'alert'
 
 
   copy['period_end']= pd.to_datetime(copy['period_end'], unit='s', utc=True)
@@ -181,13 +185,13 @@ def get_alerts():
   result=copy
 
   print('writing alerts cache')
-  result.to_json(alerts_response_cache, orient='values')
+  result.to_json(alerts_response_cache, orient=orient)
   numf = open(file_alerts_request, "a")
   numf.write(str(int(time.time()))+"\n")
   numf.close()
 
 
-  return result.to_json(orient='values')
+  return result.to_json(orient=orient)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)

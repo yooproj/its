@@ -1,59 +1,25 @@
+// @ts-nocheck
 import React, {Component} from 'react';
 import './App.css';
 import {KeplerGl} from "@kepler.gl/components";
 import {connect, ReactReduxContext} from 'react-redux'
-import {addDataToMap} from '@kepler.gl/actions';
+import {addDataToMap, fitBounds} from '@kepler.gl/actions';
 import {replaceDataInMap} from "kepler.gl/src/actions";
 import {ReplaceDataInMapPayload} from "kepler.gl/src/actions/dist/actions";
 import axios from "axios";
 import {ParsedConfig} from "@kepler.gl/types/schemas";
 
 class App extends Component<any, any> {
-  private readonly alerts_fields: any;
-  private readonly veh_fields: any;
+  private alerts_fields: any;
+  private veh_fields: any;
   private readonly config: ParsedConfig;
 
   constructor(props) {
     super(props);
     const DATE_FORMAT = 'h:mm a MMMM DD, YYYY'
 
-    this.alerts_fields = [
-      {name: 'id', format: '', type: 'string'},
-      {name: 'timestamp', format: '', type: 'timestamp'},
-      {name: 'alert.cause', format: '', type: 'string'},
-      {name: 'alert.effect', format: '', type: 'string'},
-      {name: 'alert.url.translation', format: '', type: 'string'},
-      {name: 'stop_id', format: '', type: 'string'},
-      {name: 'attributes.stop_code', format: '', type: 'string'},
-      {name: 'attributes.stop_lat', format: '', type: 'real'},
-      {name: 'attributes.stop_lon', format: '', type: 'real'},
-      {name: 'attributes.stop_name', format: '', type: 'string'},
-      {name: 'alert_text', format: '', type: 'string'},
-      {name: 'description', format: '', type: 'string'},
-      {name: 'period_start', format: '', type: 'timestamp'},
-      {name: 'period_end', format: '', type: 'timestamp'},
-      {name: 'start', format: '', type: 'timestamp'},
-      {name: 'end', format: '', type: 'timestamp'},
-    ]
-    this.veh_fields = [
-      {name: 'id', format: '', type: 'string'},
-      {name: 'is_deleted',},
-      {name: 'vehicle.position.latitude', format: '', type: 'real'},
-      {name: 'vehicle.position.longitude', format: '', type: 'real'},
-      {name: 'vehicle.position.bearing',},
-      {name: 'vehicle.position.speed',},
-      {name: 'vehicle.timestamp',},
-      {name: 'vehicle.vehicle.id',},
-      {name: 'vehicle.vehicle.label',},
-      {name: 'vehicle.vehicle.license_plate',},
-      {name: 'vehicle.trip.start_time',},
-      {name: 'vehicle.trip.start_date',},
-      {name: 'vehicle.trip.schedule_relationship',},
-      {name: 'vehicle.trip.route_id',},
-      {name: 'vehicle.trip.direction_id',},
-      {name: 'vehicle.occupancy_status',},
-      {name: 'vehicle.position.odometer',},
-    ]
+    this.alerts_fields = []
+    this.veh_fields = []
     this.config = {
       version: 'v1',
       config: {
@@ -77,14 +43,35 @@ class App extends Component<any, any> {
     } as ParsedConfig;
   }
 
+  buildFields(from) {
+    return Object.values(
+      from
+    ).slice(1).map(v => {
+        if (v.type === 'number') {
+          v.type = 'real'
+        } else if (v.type === 'boolean') {
+          v.type = 'bool'
+        }
+        return v
+      }
+    )
+  }
+
   setData(response_data, first = false) {
+    if (this.veh_fields.length === 0) {
+      this.veh_fields = this.buildFields(response_data['vehicles']['schema']['fields'])
+    }
     const vehiclesData = {
       fields: this.veh_fields,
-      rows: response_data['vehicles']
+      rows: response_data['vehicles']['data'].map(e => Object.values(e).slice(1))
     };
+
+    if (this.alerts_fields.length === 0) {
+      this.alerts_fields = this.buildFields(response_data['alerts']['schema']['fields'])
+    }
     const alertsData = {
       fields: this.alerts_fields,
-      rows: (response_data['alerts'])
+      rows: response_data['alerts']['data'].map(e => Object.values(e).slice(1))
     };
     if (first) {
       this.props.dispatch(
@@ -101,19 +88,20 @@ class App extends Component<any, any> {
               {
                 info: {
                   label: 'Disruptions/Alerts',
-                  id: 'alerts'
+                  id: 'alerts',
+                  // color: '#ff0000'
                 },
                 data: alertsData
               },
             ],
             options: {
-              centerMap: true,
+              centerMap: false,
               readOnly: false,
               keepExistingConfig: false
             },
             config: this.config,
             info: {
-              title: 'Taro and Blue',
+              title: 'Auckland Transport',
               description: 'Auckland Transport'
             },
           }
@@ -130,7 +118,8 @@ class App extends Component<any, any> {
             data: vehiclesData
           },
           options: {
-            centerMap: false
+            centerMap: false,
+            autoCreateLayers: false,
           }
 
         } as ReplaceDataInMapPayload))
@@ -138,6 +127,8 @@ class App extends Component<any, any> {
   }
 
   componentDidMount() {
+    this.props.dispatch(fitBounds([174.726308, -36.827554, 174.860643, -36.902692,]));
+
     axios({
       method: 'GET',
       url: 'http://localhost:3000/update',
