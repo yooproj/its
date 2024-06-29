@@ -38,7 +38,7 @@ export class AppController {
           this.subject.next(d)
         })
 
-      }, 5000)
+      }, 3000)
     }
 
     return this.subject.pipe(map(function (data) {

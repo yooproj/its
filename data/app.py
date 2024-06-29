@@ -91,7 +91,7 @@ def get_vehicles():
 
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
-  entities['icon'] = 'car'
+#   entities['icon'] = 'car'
 
   response = entities.to_json(orient=orient)
 
