@@ -99,7 +99,6 @@ def get_vehicles():
 
     req.get_method = lambda: 'GET'
     response = urllib.request.urlopen(req)
-#     print(response.getcode())
     if response.getcode() != 200:
       print('Error!!!')
     contents = response.read()
@@ -108,7 +107,6 @@ def get_vehicles():
 
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
-#   entities['icon'] = 'car'
 
   response = entities.to_json(orient=orient)
 
@@ -121,9 +119,6 @@ def get_vehicles():
   return response
 
 def get_alerts():
-  # should request once an hour
-  # decode header text
-  print('get_alerts   ')
   if can_make_request() == False:
     try:
       with open(alerts_response_cache, 'r') as f:
@@ -131,7 +126,6 @@ def get_alerts():
     except Exception as e:
       print('no alerts cache')
 
-  print('before try ')
   try:
     url = "https://api.at.govt.nz/realtime/legacy/servicealerts"
 
@@ -139,16 +133,12 @@ def get_alerts():
     'Cache-Control': 'no-cache',
     'Ocp-Apim-Subscription-Key': os.environ.get('AT_KEY'),
     }
-    print('before req')
     req = urllib.request.Request(url, headers=hdr)
-    print('after req')
 
     req.get_method = lambda: 'GET'
     response = urllib.request.urlopen(req)
-    print(' alerts req     ')
-    print(response.getcode())
-    if response.getcode() != 200:#
-      print('Error    !!!')
+    if response.getcode() != 200:
+      print('Error!!!')
     contents = (response.read())
 
     data = json.loads((contents))
@@ -166,15 +156,13 @@ def get_alerts():
   alerts_copy = alerts_copy.drop(['route_id'], axis=1)
 
   n = entities.merge(alerts_copy, on=['id'])
-  n.dropna(subset=["stop_id"], inplace=True)  # option 1
+  n.dropna(subset=["stop_id"], inplace=True)
 
   stops = pd.json_normalize(json.load(open(file_stops))['data'])
-  print(stops)
-  print('  ')
   stops = stops[["attributes.stop_code", "attributes.stop_id", "attributes.stop_lat", "attributes.stop_lon", "attributes.stop_name"]]
   stops = stops.rename(columns={"attributes.stop_id": "stop_id"})
 
-  result = n.merge(stops, on=['stop_id'],how='left')
+  result = n.merge(stops, on=['stop_id'], how='left')
 
   copy = result.copy()
   copy['alert_text'] = pd.json_normalize(pd.json_normalize(copy['alert.header_text.translation'])[0])['text']
@@ -192,19 +180,20 @@ def get_alerts():
   copy['period_end']= pd.to_datetime(copy['period_end'], unit='s', utc=True)
   copy['period_start']= pd.to_datetime(copy['period_start'], unit='s', utc=True)
 
+  # convert to New Zealand timezone
   copy['period_end'] = copy['period_end'] + pd.Timedelta('12:00:00')
-
   copy['period_start'] = copy['period_start'] + pd.Timedelta('12:00:00')
 
-  copy=copy.drop(['alert.header_text.translation','alert.description_text.translation','alert.active_period','alert.informed_entity'],axis=1)
+  copy=copy.drop(['alert.header_text.translation','alert.description_text.translation',
+                  'alert.url.translation','trip.trip_id','stop_id','id','alert.cause',
+                  'alert.active_period','alert.informed_entity','timestamp','alert.effect',
+                  'end','start',],axis=1)
   result=copy
 
-  print('writing alerts cache')
   result.to_json(alerts_response_cache, orient=orient)
   numf = open(file_alerts_request, "a")
   numf.write(str(int(time.time()))+"\n")
   numf.close()
-
 
   return result.to_json(orient=orient)
 
