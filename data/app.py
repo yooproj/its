@@ -108,6 +108,11 @@ def get_vehicles():
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
 
+  entities = entities.drop(['is_deleted','vehicle.timestamp','vehicle.vehicle.id',
+                             'vehicle.trip.trip_id','vehicle.trip.start_time','id',
+                             'vehicle.trip.start_date','vehicle.trip.schedule_relationship',
+                             'vehicle.position.odometer','vehicle.position.bearing'],axis=1)
+  entities['vehicle.trip.direction_id'] = entities['vehicle.trip.direction_id'].replace({0.0: 'outbound', 1.0: 'inbound'})
   response = entities.to_json(orient=orient)
 
   entities.to_json(vehicles_response_cache, orient=orient)
@@ -185,7 +190,7 @@ def get_alerts():
   copy['period_start'] = copy['period_start'] + pd.Timedelta('12:00:00')
 
   copy=copy.drop(['alert.header_text.translation','alert.description_text.translation',
-                  'alert.url.translation','trip.trip_id','stop_id','id','alert.cause',
+                  'alert.url.translation','stop_id','id','alert.cause',
                   'alert.active_period','alert.informed_entity','timestamp','alert.effect',
                   'end','start',],axis=1)
   result=copy

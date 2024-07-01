@@ -40,7 +40,13 @@ class App extends Component<any, any> {
                   'Alert',
                   {name: 'Start', format: DATE_FORMAT},
                   {name: 'End', format: DATE_FORMAT},
-                  // 'description',
+                ],
+                'vehicles': [
+                  'License Plate',
+                  'Speed',
+                  'Route',
+                  'Direction',
+                  'Occupancy, 0 to 6, less to more people',
                 ]
               }
             }
@@ -66,6 +72,21 @@ class App extends Component<any, any> {
             break;
           case 'period_start':
             v.name = 'Start';
+            break;
+          case 'vehicle.vehicle.license_plate':
+            v.name = 'License Plate';
+            break;
+          case 'vehicle.position.speed':
+            v.name = 'Speed';
+            break;
+          case 'vehicle.trip.route_id':
+            v.name = 'Route';
+            break;
+          case 'vehicle.trip.direction_id':
+            v.name = 'Direction';
+            break;
+          case 'vehicle.occupancy_status':
+            v.name = 'Occupancy, 1 to 6, less to more people';
             break;
         }
 
