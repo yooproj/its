@@ -31,6 +31,29 @@ class App extends Component<any, any> {
       version: 'v1',
       config: {
         visState: {
+          layers: [
+            {
+              type: 'icon',
+              id: 'alerts',
+              config: {
+                dataId: 'alerts',
+                label: 'Alerts',
+                color: [253, 121, 0],
+                columns: {
+                  lat: 'attributes.stop_lat',
+                  icon: 'icon',
+                  lng: 'attributes.stop_lon',
+                  altitude: null
+                },
+                isVisible: true,
+                visConfig: {radius: 15},
+                highlightColor: [255, 0, 0, 255]
+              },
+              visualChannels: {
+                sizeField: {name: 'Plan', type: 'integer'}
+              }
+            },
+          ],
           interactionConfig: {
             tooltip: {
               enabled: true,
@@ -140,7 +163,7 @@ class App extends Component<any, any> {
             options: {
               centerMap: false,
               readOnly: false,
-              autoCreateLayers: true,
+              autoCreateLayers: false,
               keepExistingConfig: true
             },
             config: this.config,
