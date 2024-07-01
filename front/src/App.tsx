@@ -36,11 +36,11 @@ class App extends Component<any, any> {
               enabled: true,
               fieldsToShow: {
                 'alerts': [
-                  'attributes.stop_name',
-                  'alert_text',
-                  {name: 'period_start', format: DATE_FORMAT},
-                  {name: 'period_end', format: DATE_FORMAT},
-                  'description',
+                  'Stop',
+                  'Alert',
+                  {name: 'Start', format: DATE_FORMAT},
+                  {name: 'End', format: DATE_FORMAT},
+                  // 'description',
                 ]
               }
             }
@@ -54,6 +54,21 @@ class App extends Component<any, any> {
     return Object.values(
       from
     ).slice(1).map(v => {
+        switch (v.name) {
+          case 'attributes.stop_name':
+            v.name = 'Stop';
+            break;
+          case 'alert_text':
+            v.name = 'Alert';
+            break;
+          case 'period_end':
+            v.name = 'End';
+            break;
+          case 'period_start':
+            v.name = 'Start';
+            break;
+        }
+
         if (v.type === 'number') {
           v.type = 'real'
         } else if (v.type === 'boolean') {
@@ -107,7 +122,7 @@ class App extends Component<any, any> {
               autoCreateLayers: true,
               keepExistingConfig: true
             },
-            // config: this.config,
+            config: this.config,
             info: {
               title: 'Auckland Transport',
               description: 'Auckland Transport'
