@@ -53,6 +53,132 @@ class App extends Component<any, any> {
                 sizeField: {name: 'Plan', type: 'integer'}
               }
             },
+            {
+              type: 'point',
+              id: 'vehicles',
+              "config": {
+                "dataId": "vehicles",
+                "label": "Transport",
+                "color": [
+                  18,
+                  147,
+                  154
+                ],
+                "highlightColor": [
+                  252,
+                  242,
+                  26,
+                  255
+                ],
+                "columns": {
+                  "lat": "vehicle.position.latitude",
+                  "lng": "vehicle.position.longitude"
+                },
+                "isVisible": true,
+                "visConfig": {
+                  "radius": 18,
+                  "fixedRadius": false,
+                  "opacity": 1,
+                  "outline": false,
+                  "thickness": 2,
+                  "strokeColor": null,
+                  "colorRange": {
+                    "name": "Uber Viz Qualitative 4",
+                    "type": "qualitative",
+                    "category": "Uber",
+                    "colors": [
+                      "#12939A",
+                      "#DDB27C",
+                      "#88572C",
+                      "#FF991F",
+                      "#F15C17",
+                      "#223F9A",
+                      "#DA70BF",
+                      "#125C77",
+                      "#4DC19C",
+                      "#776E57",
+                      "#17B8BE",
+                      "#F6D18A",
+                      "#B7885E",
+                      "#FFCB99",
+                      "#F89570",
+                      "#829AE3",
+                      "#E79FD5",
+                      "#1E96BE",
+                      "#89DAC1",
+                      "#B3AD9E",
+                      "#5A1846",
+                      "#900C3F",
+                      "#C70039",
+                      "#E3611C",
+                      "#F1920E",
+                      "#FFC300"
+                    ]
+                  },
+                  "strokeColorRange": {
+                    "name": "Global Warming",
+                    "type": "sequential",
+                    "category": "Uber",
+                    "colors": [
+                      "#5A1846",
+                      "#900C3F",
+                      "#C70039",
+                      "#E3611C",
+                      "#F1920E",
+                      "#FFC300"
+                    ]
+                  },
+                  "radiusRange": [
+                    0,
+                    50
+                  ],
+                  "filled": true
+                },
+                "hidden": false,
+                "textLabel": [
+                  {
+                    "field": null,
+                    "color": [
+                      255,
+                      255,
+                      255
+                    ],
+                    "size": 18,
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "anchor": "start",
+                    "alignment": "center",
+                    "outlineWidth": 0,
+                    "outlineColor": [
+                      255,
+                      0,
+                      0,
+                      255
+                    ],
+                    "background": false,
+                    "backgroundColor": [
+                      0,
+                      0,
+                      200,
+                      255
+                    ]
+                  }
+                ]
+              },
+              "visualChannels": {
+                "colorField": {
+                  "name": "vehicle.vehicle.label",
+                  "type": "string"
+                },
+                "colorScale": "ordinal",
+                "strokeColorField": null,
+                "strokeColorScale": "quantile",
+                "sizeField": null,
+                "sizeScale": "linear"
+              }
+            },
           ],
           interactionConfig: {
             tooltip: {

@@ -50,10 +50,13 @@ def getRoutes():
 
 def can_make_request():
   wait_seconds = 60
-  with open(file_wait_seconds, 'r') as f:
-    wait_seconds = int(f.read())
-    print('wait_seconds ')
-    print(wait_seconds)
+  try:
+    with open(file_wait_seconds, 'r') as f:
+      wait_seconds = int(f.read())
+      print('wait_seconds ')
+      print(wait_seconds)
+  except Exception as e:
+    wait_seconds = 60
 
   try:
     with open(file, 'r') as f:
@@ -108,7 +111,7 @@ def get_vehicles():
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
 
-  entities = entities.drop(['is_deleted','vehicle.timestamp','vehicle.vehicle.id',
+  entities = entities.drop(['is_deleted','vehicle.timestamp',
                              'vehicle.trip.trip_id','vehicle.trip.start_time','id',
                              'vehicle.trip.start_date','vehicle.trip.schedule_relationship',
                              'vehicle.position.odometer','vehicle.position.bearing'],axis=1)
