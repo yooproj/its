@@ -5,7 +5,7 @@ b:
 	docker-compose run  --rm itsback $(c)
 
 up:
-	docker-compose up -d
+	docker-compose up --remove-orphans -d
 down:
 	docker-compose down
 init: down up
