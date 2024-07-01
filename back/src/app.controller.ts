@@ -29,6 +29,13 @@ export class AppController {
     return data
   }
 
+  @Get('/routes')
+  async routes() {
+    const data = await this.appService.getRoutes()
+
+    return data
+  }
+
   @Sse('sse')
   sse(): Observable<MessageEvent> {
     if (this.timer === null) {

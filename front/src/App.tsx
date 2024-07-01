@@ -13,12 +13,19 @@ class App extends Component<any, any> {
   private alerts_fields: any;
   private veh_fields: any;
   private readonly config: any;
+  private routesFields: any;
 
   constructor(props) {
     super(props);
     const DATE_FORMAT = 'h:mm a MMMM DD, YYYY'
     this.state = {off: false}
     this.alerts_fields = []
+    this.routesFields = [
+      {name: 'index', format: '',},
+      {name: 'shape_pt_lat', format: '', type: 'real'},
+      {name: 'shape_pt_lon', type: 'real',},
+      {name: 'route_id', format: '', type: 'string'},
+    ]
     this.veh_fields = []
     this.config = {
       version: 'v1',
@@ -151,12 +158,50 @@ class App extends Component<any, any> {
     const updateOff = (e) => {
       this.setState({off: document.querySelector('#off')['checked'] === true})
     }
+    const loadRoutes = () => {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:3000/routes',
+      }).then(data => {
+        const routesData = {
+          fields: this.routesFields,
+          rows: data.data
+        };
+        this.props.dispatch(
+          addDataToMap(
+            {
+              datasets: [
+                {
+                  info: {
+                    label: 'Routes',
+                    id: 'routes',
+                  },
+                  data: routesData
+                },
+              ],
+              options: {
+                centerMap: false,
+                readOnly: false,
+                autoCreateLayers: true,
+                keepExistingConfig: true
+              },
+              info: {
+                title: 'Auckland Transport',
+                description: 'Auckland Transport'
+              },
+            }
+          ))
+
+      })
+    }
 
     const token: string = 'pk.eyJ1IjoibmVrb3phZW1vbiIsImEiOiJjbHc3bXVhOGUxaDZ0MmtxZXJlaG5uODV2In0.r-32TJBbgyDT2kfgpHBfFg'
     return <>
       <div>
-        <div className={'header'}>
+        <div className="header">
+
           <h1>Auckland Public Transport</h1>
+
           <div className="header-real">Real-time update:</div>
           <div className="normal-container">
             <div className="smile-rating-container">
@@ -177,7 +222,9 @@ class App extends Component<any, any> {
               </div>
             </div>
           </div>
+          <button className="button-3" role="button" onClick={loadRoutes}>Load routes</button>
         </div>
+
 
         <ReactReduxContext.Consumer>
           {({store}) => (

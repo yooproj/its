@@ -14,6 +14,7 @@ file_alerts_request = './data/alerts_requests.txt'
 file_wait_seconds = './data/wait_seconds'
 file_stops = './data/stops.json'
 orient = 'table'
+file_routes_cache = './data/routes.csv'
 app = Flask(__name__)
 
 
@@ -25,6 +26,22 @@ def getData():
 
   response = app.response_class(
     response=json.dumps({'vehicles': json.loads(vehicles), 'alerts': json.loads(get_alerts())}),
+    status=200,
+    mimetype='application/json'
+  )
+  return response
+
+@app.route('/routes')
+def getRoutes():
+  routes_data=[]
+  try:
+    routes_data = pd.read_csv(file_routes_cache)
+
+  except Exception as e:
+    routes_data=[]
+
+  response = app.response_class(
+    response=routes_data.to_json(orient='values'),
     status=200,
     mimetype='application/json'
   )
@@ -95,9 +112,7 @@ def get_vehicles():
 
   response = entities.to_json(orient=orient)
 
-  f = open(vehicles_response_cache, "w")
-  f.write(response)
-  f.close()
+  entities.to_json(vehicles_response_cache, orient=orient)
   numf = open(file_vehicles_request, "a")
   numf.write(str(int(time.time()))+"\n")
   numf.close()

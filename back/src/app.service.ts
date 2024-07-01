@@ -21,4 +21,13 @@ export class AppService {
     })
 
   }
+
+  async getRoutes() {
+    return axios({
+        method: 'GET',
+        url: 'http://itsdata:8000/routes',
+      }).then(m => {
+        return m.data
+      })
+  }
 }
