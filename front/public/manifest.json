@@ -1,9 +1,9 @@
 {
-  "short_name": "Hive Game",
-  "name": "Hive Game By Anna Borzenko",
+  "short_name": "Auckland Public Transport",
+  "name": "Auckland Public Transport Visualization",
   "icons": [
     {
-      "src": "favicon-queen.svg",
+      "src": "favicon.svg",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
