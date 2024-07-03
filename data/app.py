@@ -111,6 +111,9 @@ def get_vehicles():
   data = json.loads(contents)
   entities = pd.json_normalize(data['response']['entity'])
 
+  entities['vid'] = ([entities['vehicle.trip.route_id'][i] or entities['vehicle.vehicle.license_plate'][i] or 'V'+entities['vehicle.vehicle.id'][i] for i in entities['vehicle.vehicle.license_plate'].keys()])
+
+
   entities = entities.drop(['is_deleted','vehicle.timestamp',
                              'vehicle.trip.trip_id','vehicle.trip.start_time','id',
                              'vehicle.trip.start_date','vehicle.trip.schedule_relationship',

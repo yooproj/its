@@ -40,7 +40,7 @@
 }
 
 .header-real {
-	margin-left: 155px;
+	margin-left: 20px;
 }
 
 .header h1 {
@@ -283,9 +283,32 @@ Toggle Changes
 }
 
 /* CSS */
+.update-interval {
+
+	--font-size: 12px;
+	--webhighlights-font-size: 12px;
+	--link-color: #1d9bf0;
+	--wh-form-active-color: #3b82f6;
+	--wh-accent-blue: #1f6feb;
+	-webkit-font-smoothing: antialiased;
+	pointer-events: all;
+	width: 70px;
+	padding: 4px 10px;
+	color: #29323C;
+	height: 34px;
+	outline: 0;
+	font-size: 14px;
+	box-sizing: border-box;
+	position: relative;
+	right: 333px;
+}
+.label-update-interval {
+	position: relative;
+	right: 326px;
+}
 .button-3 {
 	position: relative;
-	right: 38px;
+	right: 100px;
 	appearance: none;
 	background-color: #2ea44f;
 	border: 1px solid rgba(27, 31, 35, .15);

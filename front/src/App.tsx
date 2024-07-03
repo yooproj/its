@@ -18,13 +18,13 @@ class App extends Component<any, any> {
   constructor(props) {
     super(props);
     const DATE_FORMAT = 'h:mm a MMMM DD, YYYY'
-    this.state = {off: false}
+    this.state = {off: false, interval: 1}
     this.alerts_fields = []
     this.routesFields = [
       {name: 'index', format: '',},
       {name: 'shape_pt_lat', format: '', type: 'real'},
       {name: 'shape_pt_lon', type: 'real',},
-      {name: 'route_id', format: '', type: 'string'},
+      {name: 'Route', format: '', type: 'string'},
     ]
     this.veh_fields = []
     this.config = {
@@ -46,11 +46,137 @@ class App extends Component<any, any> {
                   altitude: null
                 },
                 isVisible: true,
-                visConfig: {radius: 20},
+                visConfig: {
+                  radius: 20,
+                  "opacity": 1,
+                },
                 highlightColor: [255, 0, 0, 255]
               },
               visualChannels: {
                 sizeField: {name: 'Plan', type: 'integer'}
+              }
+            },
+            {
+              "id": "4i842mg",
+              "type": "point",
+              "config": {
+                "dataId": "routes",
+                "label": "Routes",
+                "color": [
+                  231,
+                  159,
+                  213
+                ],
+                "highlightColor": [
+                  252,
+                  242,
+                  26,
+                  255
+                ],
+                "columns": {
+                  "lat": "shape_pt_lat",
+                  "lng": "shape_pt_lon"
+                },
+                "isVisible": true,
+                "visConfig": {
+                  "radius": 10,
+                  "fixedRadius": false,
+                  "opacity": 0.8,
+                  "outline": false,
+                  "thickness": 2,
+                  "strokeColor": null,
+                  "colorRange": {
+                    "name": "Custom Palette",
+                    "type": "custom",
+                    "category": "Custom",
+                    "colors": [
+                      "#12939A",
+                      "#DDB27C",
+                      "#88572C",
+                      "#FF991F",
+                      "#F15C17",
+                      "#223F9A",
+                      "#DA70BF",
+                      "#125C77",
+                      "#4DC19C",
+                      "#776E57",
+                      "#17B8BE",
+                      "#F6D18A",
+                      "#B7885E",
+                      "#FFCB99",
+                      "#F89570",
+                      "#829AE3",
+                      "#E79FD5",
+                      "#1E96BE",
+                      "#89DAC1",
+                      "#B3AD9E",
+                      "#83795e",
+                      "#ca25ca",
+                      "#527552"
+                    ]
+                  },
+                  "strokeColorRange": {
+                    "name": "Global Warming",
+                    "type": "sequential",
+                    "category": "Uber",
+                    "colors": [
+                      "#5A1846",
+                      "#900C3F",
+                      "#C70039",
+                      "#E3611C",
+                      "#F1920E",
+                      "#FFC300"
+                    ]
+                  },
+                  "radiusRange": [
+                    0,
+                    50
+                  ],
+                  "filled": true
+                },
+                "hidden": false,
+                "textLabel": [
+                  {
+                    "field": null,
+                    "color": [
+                      255,
+                      255,
+                      255
+                    ],
+                    "size": 18,
+                    "offset": [
+                      0,
+                      0
+                    ],
+                    "anchor": "start",
+                    "alignment": "center",
+                    "outlineWidth": 0,
+                    "outlineColor": [
+                      255,
+                      0,
+                      0,
+                      255
+                    ],
+                    "background": false,
+                    "backgroundColor": [
+                      0,
+                      0,
+                      200,
+                      255
+                    ]
+                  }
+                ]
+              },
+              "visualChannels": {
+                "colorField": {
+                  "name": "Route",
+                  "type": "string"
+                },
+                "colorScale": "ordinal",
+                "strokeColorField": null,
+                "strokeColorScale": "quantile",
+                "sizeField": null,
+                "sizeScale": "linear"
               }
             },
             {
@@ -225,7 +351,7 @@ class App extends Component<any, any> {
               },
               "visualChannels": {
                 "colorField": {
-                  "name": "vehicle.vehicle.label",
+                  "name": "vid",
                   "type": "string"
                 },
                 "colorScale": "ordinal",
@@ -395,9 +521,40 @@ class App extends Component<any, any> {
     })
   }
 
+  updateVehicles() {
+    console.log((new Date()).toISOString())
+    axios({
+      method: 'GET',
+      url: 'http://localhost:3000/update',
+    }).then(data => {
+      this.setData(data.data)
+      if (!this.state.off) {
+        setTimeout(() => {
+          this.updateVehicles()
+        }, this.state.interval * 1000)
+      }
+    })
+  }
+
   render() {
+    const updateInterval = () => {
+      const input = document.querySelector('.js-interval')
+      const interval = +(input['value'])
+      if (Number.isInteger(interval) && interval > 0) {
+        this.setState({...this.state, interval: interval})
+      } else {
+        input['value'] = 1
+      }
+    }
     const updateOff = (e) => {
-      this.setState({off: document.querySelector('#off')['checked'] === true})
+      const isUpdateOff = document.querySelector('#off')['checked'] === true
+      this.setState({off: isUpdateOff})
+      if (!isUpdateOff) {
+        setTimeout(() => {
+          this.updateVehicles()
+        }, this.state.interval * 1000)
+      }
+
     }
     const loadRoutes = () => {
       axios({
@@ -439,10 +596,9 @@ class App extends Component<any, any> {
     const token: string = 'pk.eyJ1IjoibmVrb3phZW1vbiIsImEiOiJjbHc3bXVhOGUxaDZ0MmtxZXJlaG5uODV2In0.r-32TJBbgyDT2kfgpHBfFg'
     return <>
       <div>
+        <h1 style={{marginLeft: '20px'}}>Auckland Public Transport</h1>
+
         <div className="header">
-
-          <h1>Auckland Public Transport</h1>
-
           <div className="header-real">Real-time update:</div>
           <div className="normal-container">
             <div className="smile-rating-container">
@@ -463,6 +619,9 @@ class App extends Component<any, any> {
               </div>
             </div>
           </div>
+          <input className="update-interval js-interval" type="number" defaultValue="1" onChange={updateInterval}
+          />
+          <div className="label-update-interval">seconds</div>
           <button className="button-3" role="button" onClick={loadRoutes}>Load routes</button>
         </div>
 

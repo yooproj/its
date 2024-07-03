@@ -20,11 +20,11 @@ export class AppController {
   @Get('/update')
   async update() {
     const data = await this.appService.getData()
-    try {
-      this.subject.next(data)
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   this.subject.next(data)
+    // } catch (err) {
+    //   console.error(err);
+    // }
 
     return data
   }
