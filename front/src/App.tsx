@@ -18,7 +18,7 @@ class App extends Component<any, any> {
   constructor(props) {
     super(props);
     const DATE_FORMAT = 'h:mm a MMMM DD, YYYY'
-    this.state = {off: false, interval: 1}
+    this.state = {off: true, interval: 1}
     this.alerts_fields = []
     this.routesFields = [
       {name: 'index', format: '',},
@@ -510,13 +510,10 @@ class App extends Component<any, any> {
       url: 'http://localhost:3000/update',
     }).then(data => {
       this.setData(data.data, true)
-      const eventSource = new EventSource('//localhost:3000/sse');
-      eventSource.onmessage = ({data}) => {
-        if (this.state.off === true) {
-          return;
-        }
-        const response_data = JSON.parse(data)
-        this.setData(response_data)
+      if (!this.state.off) {
+        setTimeout(() => {
+          this.updateVehicles()
+        }, this.state.interval * 1000)
       }
     })
   }
@@ -604,8 +601,8 @@ class App extends Component<any, any> {
             <div className="smile-rating-container">
               <div className="smile-rating-toggle-container">
                 <form className="submit-rating">
-                  <input id="off" name="satisfaction" type="radio" onClick={updateOff}/>
-                  <input id="on" name="satisfaction" type="radio" defaultChecked={true} onClick={updateOff}/>
+                  <input id="off" name="satisfaction" type="radio" defaultChecked={true} onClick={updateOff}/>
+                  <input id="on" name="satisfaction" type="radio" onClick={updateOff}/>
                   <label htmlFor="off" className="rating-label rating-label-off">Off</label>
                   <div className="smile-rating-toggle"></div>
 
@@ -619,9 +616,10 @@ class App extends Component<any, any> {
               </div>
             </div>
           </div>
+          <div className="label-update-interval label-update-interval-1">every</div>
           <input className="update-interval js-interval" type="number" defaultValue="1" onChange={updateInterval}
           />
-          <div className="label-update-interval">seconds</div>
+          <div className="label-update-interval label-update-interval-2">seconds</div>
           <button className="button-3" role="button" onClick={loadRoutes}>Load routes</button>
         </div>
 

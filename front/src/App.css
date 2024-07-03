@@ -282,9 +282,11 @@ Toggle Changes
 	background-color: #00b9ee;
 }
 
-/* CSS */
+
 .update-interval {
 
+	position: relative;
+	right: 320px;
 	--font-size: 12px;
 	--webhighlights-font-size: 12px;
 	--link-color: #1d9bf0;
@@ -299,12 +301,15 @@ Toggle Changes
 	outline: 0;
 	font-size: 14px;
 	box-sizing: border-box;
-	position: relative;
-	right: 333px;
+
 }
-.label-update-interval {
+.label-update-interval-1 {
 	position: relative;
 	right: 326px;
+}
+.label-update-interval-2 {
+	position: relative;
+	right: 316px;
 }
 .button-3 {
 	position: relative;
