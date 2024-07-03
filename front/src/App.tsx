@@ -31,6 +31,60 @@ class App extends Component<any, any> {
       version: 'v1',
       config: {
         visState: {
+          "filters": [
+            {
+              "dataId": [
+                "vehicles"
+              ],
+              "id": "dg3hisz",
+              "name": [
+                "Route"
+              ],
+              "type": "multiSelect",
+              "value": [],
+              "plotType": "histogram",
+              "animationWindow": "free",
+              "yAxis": null,
+              "view": "side",
+              "speed": 1,
+              "enabled": true
+            },
+            {
+              "dataId": [
+                "routes"
+              ],
+              "id": "rjzywhi6",
+              "name": [
+                "Route"
+              ],
+              "type": "multiSelect",
+              "value": [],
+              "plotType": "histogram",
+              "animationWindow": "free",
+              "yAxis": null,
+              "view": "side",
+              "speed": 1,
+              "enabled": true
+            },
+            {
+              "dataId": [
+                "vehicles"
+              ],
+              "id": "ke35bdwt",
+              "name": [
+                "License Plate"
+              ],
+              "type": "multiSelect",
+              "value": [],
+              "plotType": "histogram",
+              "animationWindow": "free",
+              "yAxis": null,
+              "view": "side",
+              "speed": 1,
+              "enabled": true
+            },
+
+          ],
           layers: [
             {
               type: 'icon',
@@ -294,7 +348,17 @@ class App extends Component<any, any> {
                       "#7fffd4",
                       "#ff69b4",
                       "#ffe4c4",
-                      "#ffc0cb"
+                      "#ffc0cb",
+                      '#cbd5e1',
+                      '#94a3b8',
+                      '#7c3aed',
+                      '#f0abfc',
+                      '#d946ef',
+                      '#fecdd3',
+                      '#fda4af',
+                      '#fb7185',
+                      '#92ffaa',
+                      '#d62d4c',
                     ]
                   },
                   "strokeColorRange": {
