@@ -32,23 +32,7 @@ class App extends Component<any, any> {
       config: {
         visState: {
           "filters": [
-            {
-              "dataId": [
-                "vehicles"
-              ],
-              "id": "dg3hisz",
-              "name": [
-                "Route"
-              ],
-              "type": "multiSelect",
-              "value": [],
-              "plotType": "histogram",
-              "animationWindow": "free",
-              "yAxis": null,
-              "view": "side",
-              "speed": 1,
-              "enabled": true
-            },
+
             {
               "dataId": [
                 "routes"
@@ -83,7 +67,40 @@ class App extends Component<any, any> {
               "speed": 1,
               "enabled": true
             },
-
+            {
+              "dataId": [
+                "alerts"
+              ],
+              "id": "a30bvjyz",
+              "name": [
+                "Stop"
+              ],
+              "value": [],
+              "type": "multiSelect",
+              "plotType": "histogram",
+              "animationWindow": "free",
+              "yAxis": null,
+              "view": "side",
+              "speed": 1,
+              "enabled": true
+            },
+            {
+              "dataId": [
+                "vehicles"
+              ],
+              "id": "dg3hisz",
+              "name": [
+                "Route"
+              ],
+              "type": "multiSelect",
+              "value": [],
+              "plotType": "histogram",
+              "animationWindow": "free",
+              "yAxis": null,
+              "view": "side",
+              "speed": 1,
+              "enabled": true
+            },
           ],
           layers: [
             {
